@@ -1,71 +1,53 @@
-#include <stdio.h>
 #include <stdlib.h>
-
+#include <stdlib.h>
+#include "main.h"
 /**
- * string_nconcat - Concatenates two strings with the first 'n' characters
- *                  from the second string.
- * @s1: The first string.
- * @s2: The second string.
- * @n: The maximum number of characters from s2 to concatenate.
- *
- * Return: A pointer to the concatenated string, or NULL on failure.
+ * _strlen - calculate and return string length
+ * @string: string
+ * Return: string length
+ */
+int _strlen(char *string)
+{
+	int i;
+
+	for (i = 0; string[i] != '\0'; i++)
+		;
+	return (i);
+}
+/**
+ * string_nconcat - concatenate s1 and n bytes of s2; return ptr to string
+ * @s1: string 1
+ * @s2: string 2
+ * @n: n bytes to concat from string 2
+ * Return: pointer to concatenated string
  */
 char *string_nconcat(char *s1, char *s2, unsigned int n)
 {
-	unsigned int len1 = 0, len2 = 0, i, j;
-	char *concatenated;
+	char *ptr;
+	int num, len, i, j;
 
-	if (s1 == NULL)
+	num = n;
+
+	if (s1 == NULL) /* account for NULL strings */
 		s1 = "";
 	if (s2 == NULL)
 		s2 = "";
+	if (num < 0) /* account for negative n bytes */
+		return (NULL);
+	if (num >= _strlen(s2)) /* account for n too big */
+		num = _strlen(s2);
 
-	while (s1[len1])
-		len1++;
-	while (s2[len2])
-		len2++;
+	len = _strlen(s1) + num + 1; /* +1 to account for null pointer */
 
-	if (n >= len2)
-		n = len2;
-
-	concatenated = malloc((len1 + n + 1) * sizeof(char));
-	if (concatenated == NULL)
+	ptr = malloc(sizeof(*ptr) * len); /* malloc and check for error */
+	if (ptr == NULL)
 		return (NULL);
 
-	for (i = 0; i < len1; i++)
-		concatenated[i] = s1[i];
+	for (i = 0; s1[i] != '\0'; i++) /* concat */
+		ptr[i] = s1[i];
+	for (j = 0; j < num; j++)
+		ptr[i + j] = s2[j];
+	ptr[i + j] = '\0';
 
-	for (j = 0; j < n; j++)
-		concatenated[i + j] = s2[j];
-
-	concatenated[i + j] = '\0';
-
-	return (concatenated);
-}
-
-/**
- * main - Entry point
- *
- * Description: A sample program to demonstrate the string_nconcat function.
- *
- * Return: Always 0 (success).
- */
-int main(void)
-{
-	char *s1 = "Hello, ";
-	char *s2 = "world!";
-	unsigned int n = 5;
-
-	char *result = string_nconcat(s1, s2, n);
-	if (result == NULL)
-	{
-		fprintf(stderr, "Allocation failed\n");
-		return (1);
-	}
-
-	printf("Concatenated string: %s\n", result);
-
-	free(result);
-
-	return (0);
+	return (ptr);
 }
